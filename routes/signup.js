@@ -5,11 +5,12 @@ const {jwtAuthMiddleware, generateToken} = require('./../auth');
 const {getSignupPage,
     UpdateScores,
     UserSignup,
-    showLeaderboard}=require("../controller/user")
+    showLeaderboard,
+    logoutuser}=require("../controller/user")
 
 router.get("/",getSignupPage)
 router.post("/",UserSignup);
 router.patch("/update-score",jwtAuthMiddleware,UpdateScores);
 router.get("/leaderboard",showLeaderboard );
-  
+router.get("/logout",logoutuser)  
 module.exports=router;

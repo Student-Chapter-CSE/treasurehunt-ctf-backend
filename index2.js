@@ -1,26 +1,32 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require('cors');
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
-const Score = require("./models/scores"); // Import Score Model
-const User = require("./models/user"); // Import User Model
+const Score = require("./models/scores"); 
+const User = require("./models/user"); 
 const signuprouter = require("./routes/signup");
 const loginuser = require("./routes/login");
 const app = express();
 const server = createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   },
 });
-
-app.use(express.json()); // Middleware for JSON
+app.use(cors({
+  origin: 'http://localhost:5000', // Adjust based on your frontend
+  credentials: true // Allows sending cookies
+}));
+//Middlewares
+app.use(cookieParser());
+app.use(express.json()); 
 app.use(express.urlencoded({ extended: false }));
 
-// ✅ **MongoDB Connection**
+//MongoDB Connection
 const connection = require("./connection");
 connection.connectMongodb(process.env.MONGOURL);
 

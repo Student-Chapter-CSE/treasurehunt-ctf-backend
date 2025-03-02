@@ -29,6 +29,7 @@ async function UserSignup(req,res){
         console.log(JSON.stringify(payload));
         const token = generateToken(payload);
         console.log("Token is : ", token);
+        res.cookie("auth_token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production'? true : false, sameSite: "Strict" });
         res.status(200).json({ msg: "Signup Successful & Team Added to Leaderboard!", token: token });
 
 
@@ -53,6 +54,7 @@ async function userLogin(req,res){
                 Team_lead_email:existingUser.Team_Leader_Mail
             }
             const token = generateToken(payload);
+            res.cookie("auth_token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production'? true : false, sameSite: "Strict" });
             // resturn token as response
             return res.status(200).json({ msg: "Login Successful", token });
 
@@ -74,7 +76,6 @@ async function UpdateScores(req,res){
         const Team_Name = userData.Team_Name;
         const {Points} = req.body;
         if (!Team_Name || Points === undefined) {
-          console.log(Team_Name,Points)
           return res.status(400).json({ error: "Invalid input entered..." });
         }
     
@@ -101,12 +102,16 @@ async function showLeaderboard(req,res){
         res.status(500).json({ error: " Internal Server Error" });
       }
 }
-
+async function logoutuser(req,res){
+    res.clearCookie("auth_token");
+    res.json({ message: "Logged out successfully" });
+}
 module.exports={
     getSignupPage,
     UpdateScores,
     UserSignup,
     showLeaderboard,
     getLoginpage,
-    userLogin
+    userLogin,
+    logoutuser,
 }
