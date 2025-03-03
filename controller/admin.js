@@ -14,8 +14,8 @@ const loginadmin = async(req, res)=>{
             bcrypt.compare(Password , process.env.ADMIN_PASSWORD_HASH, (err, result)=>{
                 if(result){
                     let token = jwt.sign({Mail}, process.env.JWT_SECRET);
-                    res.cookie('token', token);
-                    res.redirect('/admin');
+                    res.cookie('token', token)
+                    .json({ msg: 'admin page'});
                 }
                 else{
                     res
