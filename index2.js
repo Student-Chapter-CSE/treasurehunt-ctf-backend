@@ -9,6 +9,8 @@ const Score = require("./models/scores");
 const User = require("./models/user"); 
 const signuprouter = require("./routes/signup");
 const loginuser = require("./routes/login");
+const adminlogin = require('./routes/adminlogin');
+const admin = require('./routes/admin');
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -94,6 +96,8 @@ io.on("connection", async (socket) => {
 });
 app.use("/", signuprouter);
 app.use("/login", loginuser);
+app.use('/adminlogin', adminlogin );
+app.use('/admin', admin);
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
