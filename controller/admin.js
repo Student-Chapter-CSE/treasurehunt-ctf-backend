@@ -11,7 +11,7 @@ const loginadmin = async(req, res)=>{
         const {Mail, Password}= req.body;
         const admin = process.env.ADMIN_NAME;
         if(Mail === admin){
-            bcrypt.compare(Password , process.env.ADMIN_PASSWORD_HASH, (err, result)=>{
+            bcrypt.compare(Password , process.env.ADMIN_PASSWORD_HASH , (err, result)=>{
                 if(result){
                     let token = jwt.sign({Mail}, process.env.JWT_SECRET);
                     res.cookie('token', token)

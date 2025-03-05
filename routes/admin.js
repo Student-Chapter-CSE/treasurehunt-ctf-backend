@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const adminmodel = require('../models/admin');
 const Ban = require('../models/Ban');
 const usermodel = require('../models/user');
 const scoresmodel = require('../models/scores');
@@ -14,7 +13,7 @@ router.post('/getuser', async(req, res)=>{
     try{
         let user = await usermodel.find();
         let score =  await scoresmodel.find();
-        res.status(200).render('admin', {user, score});
+        res.status(200).json({user, score});
     }catch(err){
         console.error(err.message);
     }
