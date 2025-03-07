@@ -96,7 +96,7 @@ io.on("connection", async (socket) => {
 });
 app.use("/", signuprouter);
 app.use("/login", loginuser);
-app.use('/adminlogin', adminlogin );
+app.use('/admin', adminlogin);
 app.use('/admin', admin);
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
