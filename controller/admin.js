@@ -10,12 +10,12 @@ async function getAdminPage(req,res){
 
 const loginadmin = async(req, res)=>{
     try{
-        const {Mail, Password}= req.body;
-        const admin = process.env.ADMIN_NAME;
-        if(Mail === admin){
-            const match = await bcrypt.compare(Password, process.env.ADMIN_PASSWORD_HASH);
+        const { Id , Password}= req.body;
+        const admin = process.env.ADMIN_ID;
+        if(Id === admin){
+            const match = await  bcrypt.compare(Password, process.env.ADMIN_PASSWORD_HASH);
                 if(match){
-                    let token = jwt.sign({Mail}, process.env.JWT_SECRET);
+                    let token = jwt.sign({Id}, process.env.JWT_SECRET);
                     res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
                     res.json({ msg: 'Admin logged in successfully' });
 
@@ -23,21 +23,26 @@ const loginadmin = async(req, res)=>{
                 else{
                     res
                     .status(403)
-                    .json({ msg: "Mail or Password incorrect"});
+                    .json({ msg: "Id or Password incorrect"});
                 }
             
         }else{
-            res.status(403).json({mes: "Mail or Password incorrect"})
+            res.status(403).json({mes: "Id or Password incorrect"})
         }
     }catch(err){
         res.status(500).json({ error: err.message });
     }
 }
+async function logoutadmin(req,res){
+    res.cookie('token', "");
+    res.json({ message: "Logged out successfully" });
+}
+
 async function getUser(req,res){
     try{
         let user = await usermodel.find();
         let score =  await scoresmodel.find();
-        res.status(200).render('admin', {user, score});
+        res.status(200).json({user, score});
     }catch(err){
         res.status(500).json({ error: err.message });
     }
@@ -48,7 +53,7 @@ async function banUser(req,res){
 
     try {
         await Ban.create({ Team_Name });
-        res.status(200).json({ msg: `${Team_Name} has been banned.` });
+        res.status(200).redirect('/login');
     } catch (error) {
         res.status(500).send("Error banning.User might have been already banned.");
     }
@@ -58,11 +63,12 @@ async function unbanUser(req,res){
     if (!Team_Name) return res.status(400).send("Team_Name is required");
 
     await Ban.deleteOne({ Team_Name });
-    res.status(200).send(` ${Team_Name} has been unbanned. `);
+    res.status(200).json({ msg: ` ${Team_Name} has been unbanned. ` });
 }
 module.exports={
     getAdminPage,
     loginadmin,
+    logoutadmin,
     getUser,
     banUser,
     unbanUser,
