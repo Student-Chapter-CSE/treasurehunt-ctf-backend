@@ -14,6 +14,7 @@ const loginadmin = async(req, res)=>{
         const admin = process.env.ADMIN_ID;
         if(Id === admin){
             const match = await  bcrypt.compare(Password, process.env.ADMIN_PASSWORD_HASH);
+            //const match=(Password.trim()==process.env.ADMIN_PASSWORD_HASH.trim())
                 if(match){
                     let token = jwt.sign({Id}, process.env.JWT_SECRET);
                     res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
@@ -23,11 +24,11 @@ const loginadmin = async(req, res)=>{
                 else{
                     res
                     .status(403)
-                    .json({ msg: "Id or Password incorrect"});
+                    .json({ msg: "Password incorrect"});
                 }
             
         }else{
-            res.status(403).json({mes: "Id or Password incorrect"})
+            res.status(403).json({mes: "Admin Id or Password incorrect"})
         }
     }catch(err){
         res.status(500).json({ error: err.message });
