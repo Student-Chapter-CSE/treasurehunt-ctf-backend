@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 const Score = require("./models/scores"); 
 const User = require("./models/user"); 
 const signuprouter = require("./routes/signup");
+const leaderboard = require("./routes/leaderboard");
+const logout = require("./routes/logout");
 const loginuser = require("./routes/login");
 const adminlogin = require('./routes/adminlogin');
 const admin = require('./routes/admin');
@@ -33,24 +35,7 @@ const connection = require("./connection");
 connection.connectMongodb(process.env.MONGOURL);
 
 
-const initializeLeaderboard = async () => {
-  try {
-    const users = await User.find(); 
-    const leaderboard = await Score.find(); 
-    const existingTeams = new Set(leaderboard.map((entry) => entry.Team_Name));
-    const newTeams = users.filter((user) => !existingTeams.has(user.Team_Name));
-    if (newTeams.length > 0) {
-      await Score.insertMany(newTeams.map((user) => ({ Team_Name: user.Team_Name })));
-      console.log(`Added ${newTeams.length} new teams to the leaderboard.`);
-    } else {
-      console.log(" Leaderboard is already up-to-date.");
-    }
-  } catch (error) {
-    console.error(" Error initializing leaderboard:", error.message);
-  }
-};
-// Run this once when the server starts
-initializeLeaderboard();
+
 io.on("connection", async (socket) => {
   console.log(" User connected:", socket.id);
   const interval = setInterval(async () => {
@@ -80,12 +65,13 @@ io.on("connection", async (socket) => {
     clearInterval(interval);
   });
 });
-
 //user routes
-app.use("/", signuprouter);
-app.use("/login", loginuser);
-app.use('/admin', adminlogin);
-app.use('/admin', admin);
+app.use("/api/register", signuprouter);
+app.use("/api/login", loginuser);
+app.use('/api/admin_login', adminlogin);
+app.use('/api/admin', admin);
+app.use("/api/leaderboard",leaderboard);
+app.use("/api/logout",logout);
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
