@@ -56,7 +56,7 @@ async function userLogin(req,res){
             const token = generateToken(payload);
             res.cookie("auth_token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production'? true : false, sameSite: "Strict" });
             // resturn token as response
-            return res.status(200).json({ msg: "Login Successful", token });
+            return res.status(200).json({ msg: "Login Successful",Team_name:Team_Name,Token: token });
 
         }
         else{
